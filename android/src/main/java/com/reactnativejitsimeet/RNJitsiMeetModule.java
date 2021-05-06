@@ -36,7 +36,20 @@ public class RNJitsiMeetModule extends ReactContextBaseJavaModule {
         UiThreadUtil.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mJitsiMeetViewReference.getJitsiMeetView() != null) {
+                // View not ready yet
+                if (mJitsiMeetViewReference.getJitsiMeetView() == null) {
+                    // Wait for some seconds, we don't want to be calling this continuously
+                    new java.util.Timer().schedule(
+                            new java.util.TimerTask() {
+                                @Override
+                                public void run() {
+                                    call(url, userInfo);
+                                }
+                            },
+                            1000
+                    );
+                } else {
+                
                     RNJitsiMeetUserInfo _userInfo = new RNJitsiMeetUserInfo();
                     if (userInfo != null) {
                         if (userInfo.hasKey("displayName")) {
